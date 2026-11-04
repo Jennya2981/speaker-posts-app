@@ -3,9 +3,14 @@ import { db } from '@/lib/db'
 import { ensureDb } from '@/lib/ensure-db'
 
 export async function GET() {
-  await ensureDb()
-  const speakers = await db.speaker.findMany({ orderBy: { name: 'asc' } })
-  return NextResponse.json(speakers)
+  try {
+    await ensureDb()
+    const speakers = await db.speaker.findMany({ orderBy: { name: 'asc' } })
+    return NextResponse.json(speakers)
+  } catch (error) {
+    console.error('[api/speakers] GET', error)
+    return NextResponse.json({ error: 'Не удалось загрузить спикеров' }, { status: 500 })
+  }
 }
 
 export async function POST(request: Request) {

@@ -3,12 +3,17 @@ import { db } from '@/lib/db'
 import { ensureDb } from '@/lib/ensure-db'
 
 export async function GET() {
-  await ensureDb()
-  const posts = await db.post.findMany({
-    orderBy: { createdAt: 'desc' },
-    include: { speaker: true },
-  })
-  return NextResponse.json(posts)
+  try {
+    await ensureDb()
+    const posts = await db.post.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { speaker: true },
+    })
+    return NextResponse.json(posts)
+  } catch (error) {
+    console.error('[api/posts] GET', error)
+    return NextResponse.json({ error: 'Не удалось загрузить посты' }, { status: 500 })
+  }
 }
 
 export async function POST(request: Request) {
