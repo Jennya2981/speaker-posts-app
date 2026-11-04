@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Сбор постов от спикеров</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="header-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </svg>
+      </div>
+      <div>
+        <div class="header-title">Сбор постов от спикеров</div>
+        <div class="header-subtitle">Отправьте пост от имени спикера или сохраните черновик</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Форма создания / редактирования -->
+    <div id="submitted-card" class="card submitted-card" style="display:none;">
+      <div class="card-content">
+        <div class="submitted-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <div class="submitted-title">Пост отправлен!</div>
+        <div class="submitted-text">Материал сохранён и передан в работу.</div>
+        <button class="btn btn-primary" id="create-another-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.5rem;">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+            <path d="M2 17l10 5 10-5"></path>
+            <path d="M2 12l10 5 10-5"></path>
+          </svg>
+          Создать ещё пост
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#b45309;">
+            <path d="M16 3a1 1 0 0 1 .943.892L20.5 7.75a1 1 0 0 1-.157 1.43l-2.76 1.38a1 1 0 0 1-1.342-.323L14.5 7.94V14a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V6H5.25a1 1 0 0 1-.943-.892L2.75 3.25a1 1 0 0 1 .157-1.43l2.76-1.38a1 1 0 0 1 1.342.323L9.5 4.06H14a1 1 0 0 1 .943.892z"></path>
+          </svg>
+          <span id="form-title">Новый пост</span>
+        </div>
+        <div class="card-description" id="form-description">
+          Заполните поля и отправьте пост или сохраните его как черновик
+        </div>
+      </div>
+      <div class="card-content">
+        <div class="form-group">
+          <label class="form-label">От чьего имени пост</label>
+          <div class="speaker-selector">
+            <select id="speaker-select" class="form-select"></select>
+            <button class="btn btn-outline add-speaker-btn" id="add-speaker-btn" aria-label="Добавить спикера">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Добавить</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="title-input">Заголовок поста</label>
+          <input type="text" id="title-input" class="form-input" placeholder="Например: Главное с конференции" maxlength="120">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="content-textarea">Текст поста</label>
+          <textarea id="content-textarea" class="form-textarea" rows="7" placeholder="О чём расскажем? Мысли, тезисы, впечатления…"></textarea>
+          <div class="char-count" id="char-count">0 символов</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="hashtags-input">Хештеги</label>
+          <input type="text" id="hashtags-input" class="form-input" placeholder="конференция2026, итоги, IT">
+          <div class="hashtag-hint">Через запятую или пробел — символ # добавится автоматически</div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid var(--border);margin:1rem 0;">
+
+        <div class="btn-group btn-group-reverse" style="display:flex;flex-direction:row-reverse;gap:0.5rem;">
+          <button class="btn btn-primary" id="publish-btn">
+            <span>Отправить</span>
+          </button>
+          <button class="btn btn-outline" id="draft-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.5rem;">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            Черновик
+          </button>
+          <button class="btn btn-ghost" id="cancel-btn">
+            Отменить
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Список постов -->
+    <section>
+      <div class="posts-header">
+        <div>
+          <div class="posts-title">Все посты</div>
+          <div class="posts-subtitle">Нажмите на пост, чтобы открыть его полный текст</div>
+        </div>
+        <div class="posts-controls">
+          <div class="select-wrapper">
+            <label class="filter-label" for="filter-speaker">Фильтр:</label>
+            <select id="filter-speaker" class="form-select"></select>
+          </div>
+          <div class="select-wrapper">
+            <label class="sort-label" for="sort-select">Сортировка:</label>
+            <select id="sort-select" class="form-select">
+              <option value="new">Сначала новые</option>
+              <option value="speakerAsc">По спикеру: А → Я</option>
+              <option value="speakerDesc">По спикеру: Я → А</option>
+            </select>
+          </div>
+          <span class="count-badge count-published" id="published-count">Опубликовано: 0</span>
+          <span class="count-badge count-drafts" id="drafts-count">Черновики: 0</span>
+        </div>
+      </div>
+      <div id="filter-info" class="posts-filter-info" style="display:none;"></div>
+
+      <ul id="posts-list"></ul>
+
+      <div id="empty-state" class="posts-empty" style="display:none;">
+        Пока нет ни одного поста — создайте первый!
+      </div>
+    </section>
+
+    <!-- Диалог просмотра поста -->
+    <div id="view-dialog" class="view-dialog-overlay">
+      <div class="view-dialog-content">
+        <div class="view-dialog-header">
+          <span class="status-badge status-published" id="view-status">Опубликован</span>
+          <span class="view-dialog-meta" id="view-date"></span>
+        </div>
+        <h2 class="view-dialog-title" id="view-title"></h2>
+        <div class="view-dialog-content-text" id="view-content"></div>
+        ${''}
+        <div class="view-dialog-hashtags" id="view-hashtags"></div>
+        
+        <div class="view-dialog-actions">
+          <button class="btn btn-telegram" id="view-copy-telegram-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.5rem;">
+              <path d="M4 3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm10 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM4 11c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0-4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+            </svg>
+            Копировать для Telegram
+          </button>
+          <button class="btn btn-primary" id="view-copy-all-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.5rem;">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Копировать весь пост
+          </button>
+          <div style="display:flex;gap:0.25rem;flex-wrap:wrap;">
+            <button class="btn btn-sm btn-ghost" id="view-copy-title-btn" title="Копировать заголовок">Заголовок</button>
+            <button class="btn btn-sm btn-ghost" id="view-copy-content-btn" title="Копировать текст">Текст</button>
+            <button class="btn btn-sm btn-ghost" id="view-copy-hashtags-btn" title="Копировать хештеги">Хештеги</button>
+            <button class="btn btn-sm btn-outline" id="view-edit-btn">Редактировать</button>
+          </div>
+          <button class="btn btn-ghost" id="view-close-btn">Закрыть</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Диалог добавления спикера -->
+    <div id="add-dialog" class="dialog-overlay">
+      <div class="dialog-content">
+        <div class="dialog-title">Новый спикер</div>
+        <div class="dialog-description">Добавьте спикера, от имени которого будут публиковаться посты.</div>
+        <input type="text" id="add-speaker-input" class="dialog-input" placeholder="Имя и фамилия">
+        <div class="dialog-footer">
+          <button class="btn btn-ghost" id="add-dialog-cancel">Отмена</button>
+          <button class="btn btn-primary" id="add-dialog-save">Добавить</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Сбор постов от спикеров · <span id="year"></span>
+  </footer>
+
+  <!-- Тосты -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
