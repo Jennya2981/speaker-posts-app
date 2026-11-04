@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { ensureDb } from '@/lib/ensure-db'
 
 export async function GET() {
+  await ensureDb()
   const posts = await db.post.findMany({
     orderBy: { createdAt: 'desc' },
     include: { speaker: true },
@@ -11,6 +13,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    await ensureDb()
     const body = await request.json()
     const title = (body.title ?? '').trim()
     const content = (body.content ?? '').trim()

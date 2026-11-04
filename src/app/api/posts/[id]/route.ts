@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { ensureDb } from '@/lib/ensure-db'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -14,6 +15,7 @@ function normalizeHashtags(raw: string): string {
 
 export async function DELETE(_request: Request, { params }: Params) {
   try {
+    await ensureDb()
     const { id } = await params
     await db.post.delete({ where: { id } })
     return NextResponse.json({ ok: true })
@@ -24,6 +26,7 @@ export async function DELETE(_request: Request, { params }: Params) {
 
 export async function PATCH(request: Request, { params }: Params) {
   try {
+    await ensureDb()
     const { id } = await params
     const body = await request.json()
     const data: {
