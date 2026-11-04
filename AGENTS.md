@@ -1,9 +1,75 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# AGENTS.md — Сбор постов от спикеров
 
-## This is NOT the Next.js you know
+## Назначение
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+Веб-приложение для сбора, хранения и подготовки постов от спикеров перед публикацией в соцсетях (Telegram и др.).
 
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+Приложение должно помогать ответить:
 
-<!-- END:nextjs-agent-rules -->
+- кто и какой пост подготовил;
+- какие посты уже опубликованы, а какие в черновиках;
+- какой список спикеров доступен;
+- какие посты требуют редактирования.
+
+## Карта проекта
+
+- `README.md` — описание проекта и инструкция по запуску.
+- `AGENTS.md` — правила для всех участников (этот файл).
+- `opencode.json` — разрешения OpenCode.
+- `.env.example` — пример переменных окружения (реальный `.env` не публикуется).
+- `package.json` — зависимости и скрипты (`dev`, `build`, `start`, `lint` и др.).
+- `prisma/schema.prisma` — схема базы данных (модели `Speaker` и `Post`).
+- `prisma/seed.sql` — начальные данные (спикеры).
+- `db/custom.db` — файл базы данных SQLite.
+- `src/app/page.tsx` — основной интерфейс приложения ( форма создания, список постов, просмотр).
+- `src/app/layout.tsx` — корневой layout.
+- `src/app/globals.css` — глобальные стили (Tailwind CSS 4).
+- `src/app/api/posts/route.ts` — API: GET / POST постов.
+- `src/app/api/posts/[id]/route.ts` — API: PATCH / DELETE поста.
+- `src/app/api/speakers/route.ts` — API: GET / POST спикеров.
+- `src/app/api/route.ts` — health-check.
+- `src/lib/db.ts` — клиент Prisma.
+- `src/lib/utils.ts` — утилита `cn()` для классов.
+- `src/hooks/use-toast.ts` — хуки уведомлений.
+- `src/hooks/use-mobile.ts` — определение мобильного экрана.
+- `src/components/ui/` — компоненты shadcn/ui (48 файлов).
+- `public/logo.svg`, `public/robots.txt` — статика.
+
+## Правила работы
+
+- Не удалять и не изменять `db/custom.db` без разрешения человека (содержит данные приложения).
+- Не публиковать реальный файл `.env` — только `.env.example`.
+- Не придумывать ответственных, сроки и источники — данные берутся из базы.
+- Если данных нет, писать «требует уточнения».
+- Отвечать на русском языке (включая пояснения и итоговые материалы).
+- Перед изменением файлов подготовить план и согласовать с человеком.
+- Готовое приложение размещать внутри `src/` и `public/`.
+- Не подключать внешние библиотеки без разрешения (все зависимости уже в `package.json`).
+- Первая версия запускается через `npm run dev` (Next.js dev сервер).
+
+## Критерии готовности приложения
+
+- Существуют `src/app/page.tsx`, `src/app/layout.tsx`, `src/app/globals.css`.
+- API-роуты работают: `/api/posts`, `/api/posts/[id]`, `/api/speakers`, `/api`.
+- Форма создания поста: заголовок, текст, хештеги, выбор спикера, статус (опубликовано / черновик).
+- Список постов с фильтрацией по спикеру и сортировкой (сначала новые / по спикеру А→Я / Я→А).
+- Подсчёт опубликованных и черновиков.
+- Просмотр полного текста поста в диалоге.
+- Копирование: весь пост, только для Telegram, заголовок, текст, хештеги.
+- Редактирование и удаление постов.
+- Публикация черновика.
+- Добавление нового спикера на лету.
+- Интерфейс читаем на узком экране (адаптив).
+- Приложение собирается: `npm run build` проходит без ошибок.
+
+## Конфигурация OpenCode
+
+- `opencode.json` лежит в корне репозитория. Чтение разрешено всем файлам кроме `.env` и `.env.*`.
+- Редактирование, bash-команды и другие действия требуют разрешения человека (`ask`).
+- Разрешено без разрешения: `git status*`.
+- Запрещено без разрешения: `rm*`.
+
+## Роли
+
+- Администратор (вы — Женя Вереникина): полный доступ к созданию, редактированию и удалению постов и спикеров.
+- Спикеры: создают и отправляют свои посты.
