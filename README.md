@@ -41,7 +41,7 @@ open index.html     # macOS
 | Frontend | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4 |
 | UI | shadcn/ui (Radix UI), lucide-react |
 | Backend | API Routes (Next.js) |
-| БД | SQLite + Prisma ORM |
+| БД | PostgreSQL + Prisma ORM |
 | Пакетный менеджер | npm / bun |
 
 ### Статическая версия (`static/`)
@@ -54,7 +54,7 @@ open index.html     # macOS
 
 ## Быстрый старт
 
-Требуется **Node.js 18+** (https://nodejs.org).
+Требуется **Node.js 18+** (https://nodejs.org) и база данных **PostgreSQL**.
 
 ```bash
 # 1. Клонировать репозиторий
@@ -65,23 +65,22 @@ cd speaker-posts-app
 cp .env.example .env          # macOS/Linux
 copy .env.example .env        # Windows
 
-# 3. Установить зависимости
+# 3. Вставить DATABASE_URL из панели Vercel (Storage → Postgres) в файл .env
+
+# 4. Установить зависимости
 npm install
 
-# 4. Создать базу данных (если её нет)
-npm run db:push
+# 5. Создать таблицы в базе данных
+npx prisma db push
 
-# 5. Заполнить спикерами (по желанию)
+# 6. Заполнить спикерами (по желанию)
 npm run db:seed
 
-# 6. Запустить
+# 7. Запустить
 npm run dev
 ```
 
 Откройте http://localhost:3000 в браузере.
-
-> 💡 В репозитории уже лежит файл базы данных `db/custom.db` с текущими данными.
-> Если нужна чистая база — удалите файл `db/custom.db` и выполните `npm run db:push`, затем `npm run db:seed`.
 
 ## Запуск в production
 
@@ -93,8 +92,6 @@ npm run start
 ## Структура проекта
 
 ```
-├── db/
-│   └── custom.db          # база данных SQLite (данные приложения)
 ├── prisma/
 │   ├── schema.prisma      # схема БД: модели Speaker и Post
 │   └── seed.sql           # начальные данные (спикеры)
@@ -133,7 +130,7 @@ npm run start
 
 ## Резервная копия данных
 
-Все посты и спикеры хранятся в одном файле `db/custom.db` — для бэкапа достаточно скопировать этот файл. Пример выгрузки в JSON лежит в папке `Post_for_arup` рядом с проектом.
+Все посты и спикеры хранятся в облачной базе PostgreSQL. Для бэкапа используйте инструменты вашего провайдера базы данных (например, `pg_dump` для PostgreSQL).
 
 ## Работа с Prisma
 
